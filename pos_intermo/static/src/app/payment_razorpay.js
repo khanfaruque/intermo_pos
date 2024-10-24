@@ -143,6 +143,7 @@ export class PaymentIntermo extends PaymentInterface {
 
         };
         console.log("================-----------", this.payment_method);
+        console.log("================-----------", order.name);
         var self = this;
         var url_link = await self._call_intermo(data, 'intermo_make_payment_request');
         return url_link;
