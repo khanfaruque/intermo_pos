@@ -1,7 +1,9 @@
 /** @odoo-module */
 
+import { patch } from "@web/core/utils/patch";
 import { _t } from "@web/core/l10n/translation";
 import { PaymentInterface } from "@point_of_sale/app/payment/payment_interface";
+import { Order } from "@point_of_sale/app/store/models";
 import { AlertDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { useService } from "@web/core/utils/hooks";
 import { renderToString } from "@web/core/utils/render";
@@ -122,13 +124,24 @@ export class PaymentIntermo extends PaymentInterface {
             customername = order.partner.name;
             customeremail = order.partner.email;
         }
-
+        if (! order.reference) {
+            order.set_reference(order.name);
+        }
+        var x = order.reference
+        var y = ""
+        if (x.includes("#")) {
+            y = x.split("#")
+            x = y[0]+ "#" +(parseInt(y[1])+1)
+        } else {
+            x = x + "#1"
+        }
+        order.set_reference(x);
         const data = {
             'amount': line.amount,
-            "referenceid": order.name,
+            "referenceid": x,
             "publicApiKey": this.payment_method.intermo_public_key,
             "sandbox": true,
-            "currency": "XOF",
+            "currency": order.pos.currency.name,
             "customername": customername,
             "customeremail": customeremail,
             "customerphone": "+",
@@ -144,8 +157,12 @@ export class PaymentIntermo extends PaymentInterface {
         };
         console.log("================-----------", this.payment_method);
         console.log("================-----------", order.name);
+        console.log("================---data--------", data);
         var self = this;
         var url_link = await self._call_intermo(data, 'intermo_make_payment_request');
+        order.jwt_token = url_link.jwt_token
+        console.log("================---order--------", order);
+        console.log("================---url_link--------", url_link);
         return url_link;
 
     }
@@ -153,8 +170,10 @@ export class PaymentIntermo extends PaymentInterface {
 
 
     async _waitForPaymentConfirmation() {
+
         var self = this;
         const order = self.pos.get_order();
+        console.log("================---Test--------",order.jwt_token)
 
          const payment_trx = await self.pos.orm.call("pos.payment.txn", "search_read", [], {
             fields: ["name", "status"],
@@ -164,6 +183,19 @@ export class PaymentIntermo extends PaymentInterface {
 
                order.intermo_payment_status =  payment_trx[0]['status'];
                console.log("=333232=3=323=23=3=2=32=2=2==22=2=2=2",order);
+        }
+        else{
+            var tmp_payment_method_id = null
+            order.paymentlines.forEach((pl)=>{
+                if (pl.payment_method.use_payment_terminal == "intermo"){
+                    tmp_payment_method_id = pl.payment_method.id
+                }
+            });
+            if (tmp_payment_method_id){
+                const payment_status_check = await self.pos.orm.call("pos.payment.method", "intermo_get_payment_status", [tmp_payment_method_id, order.jwt_token]);
+                console.log("test=======status", payment_status_check)
+            };
+
         }
 
     }
@@ -176,3 +208,21 @@ export class PaymentIntermo extends PaymentInterface {
         });
     }
 }
+
+patch(Order.prototype, {
+    set_reference(reference) {
+        this.assert_editable();
+        this.reference = reference;
+    },
+    export_as_JSON(){
+        const json = super.export_as_JSON();
+        json.reference = this.reference;
+        return json;
+    },
+    init_from_JSON(json) {
+        super.init_from_JSON(...arguments);
+        this.reference = json.reference;
+    },
+});
+
+

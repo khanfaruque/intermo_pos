@@ -7,6 +7,9 @@ from io import BytesIO
 import base64
 import requests
 import random
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class PosSession(models.Model):
@@ -49,7 +52,8 @@ class PosPaymentMethod(models.Model):
         return super()._get_payment_terminal_selection() + [('intermo', 'Intermo')]
 
     def intermo_get_payment_status(self, data):
-
+        # _logger.info(f"check {data}")
+        # return "Payment_Passed"
         if self.intermo_mode == 'test':
             url = f'https://prodapi.intermo.net/api/v1/pos/status/{data}'
         else:
@@ -88,6 +92,8 @@ class PosPaymentMethod(models.Model):
 
             # Add data (URL) to the QR code
             qr.add_data(response['paymentlink'])
+            _logger.info(f"QR Code Payment Link {response['paymentlink']}")
+            _logger.info(f"JWT Token {value_after_pay}")
             qr.make(fit=True)
 
             # Create an image from the QR code
