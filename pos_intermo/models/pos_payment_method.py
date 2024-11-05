@@ -8,6 +8,7 @@ import base64
 import requests
 import random
 import logging
+import json
 
 _logger = logging.getLogger(__name__)
 
@@ -52,26 +53,44 @@ class PosPaymentMethod(models.Model):
         return super()._get_payment_terminal_selection() + [('intermo', 'Intermo')]
 
     def intermo_get_payment_status(self, data):
-        # _logger.info(f"check {data}")
-        # return "Payment_Passed"
+        _logger.info(f"check {data}")
+        
+        url = f'https://prodapi.intermo.net/api/v1/pos/status/{data}'
+        # return "payment_successed"
         if self.intermo_mode == 'test':
-            url = f'https://prodapi.intermo.net/api/v1/pos/status/{data}'
+            url = f'http://localhost:7777/api/v1/pos/status/{data}'
         else:
-            url = f'https://prodapi.intermo.net/api/v1/pos/status/{data}'
+            url = f'http://localhost:7777/api/v1/pos/status/{data}'
 
-        payload = {
+        payload = json.dumps({
             "publicApiKey": self.intermo_public_key,
-            'secretKey': self.intermo_secret_key
-        }
+            "secretKey": self.intermo_secret_key
+            # 'pluginkey' : self.intermo_plugin_key
+        })
         headers = {
+            'Content-Type': 'application/json',
             'Authorization': f'Bearer {self.intermo_auth_key}'
         }
 
+        _logger.info("Testing on line 73 code...........")
         # Use `params` instead of `data` for GET requests
-        response = requests.get(url, headers=headers, params=payload)
-        print("=tes", response.json())
+        #response = requests.request("GET",url, headers=headers, data=payload)
+        # url = "http://localhost:7777/api/v1/pos/status/eyJhbGciOiJIUzI1NiJ9.eyJpcEFkZHJlc3MiOiIwOjA6MDowOjA6MDowOjEiLCJtX0lkIjoxMDAwMjcsInR4bl9pZCI6Im9zRzE2ZkdhbHdmT25BOWIiLCJzYW5kYm94TW9kZSI6dHJ1ZSwiaWF0IjoxNzMwNzMxOTUxLCJleHAiOjE3MzA3MzU1NTF9.wv3F0YDN-Fe87t6RfeBiHOfJU81t5VoqHsCRQYnfI-8"
+
+        # payload = json.dumps({
+        # "publicApiKey": "Cxdhpfa1PXOEpSC4OolJ6P46Yg4a5tBvtEcKnejOj0",
+        # "secretKey": "bvmUXhOGYodJY9l9qJtCBXlQZYdKz7TbyMlfPF9HaQ"
+        # })
+        # headers = {
+        # 'Content-Type': 'application/json',
+        # 'Authorization': 'Bearer AztlQdnChLPRTC6HWcivlaKfusDkXiV29bU3MnHalQ'
+        # }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+        # _logger.info("Response :: ", response.text)
         # Print the response to see the result
-        return response.json()['paymentStatus']
+        return json.loads(response.text)['paymentStatus']
+        return "payment_successed"
 
 
     def intermo_make_payment_request(self, data):

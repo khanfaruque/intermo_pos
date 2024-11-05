@@ -3,7 +3,7 @@
 
 	const PaymentWidget = function(config) {
 		this.config = config;
-		this.apiUrl = 'https://prodapi.intermo.net/SandBox/v1/api/GetAccessToken';
+		this.apiUrl = 'http://localhost:7777/SandBox/v1/api/GetAccessToken';
 		console.log("PaymentWidget initialized with config: ", config);
 		this.init();
 	};

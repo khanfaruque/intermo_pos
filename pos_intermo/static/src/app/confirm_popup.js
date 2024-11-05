@@ -14,7 +14,7 @@ export class PosIntermoPopup extends AbstractAwaitablePopup {
         });
         const self = this
         setInterval(() => {
-             if(self.env.services.pos.get_order().intermo_payment_status == 'payment_pass'){
+             if(self.env.services.pos.get_order().intermo_payment_status == 'payment_success'){
                 self.state.error_message = "Payment Successful!";
                 self.state.message_type = "success";
              }
@@ -22,7 +22,7 @@ export class PosIntermoPopup extends AbstractAwaitablePopup {
     }
 
     async confirm() {
-        if(this.env.services.pos.get_order().intermo_payment_status == 'payment_pass'){
+        if(this.env.services.pos.get_order().intermo_payment_status == 'payment_success'){
             super.confirm()
         }else{
             this.state.error_message = 'Please wait, payment is not completed yet!';

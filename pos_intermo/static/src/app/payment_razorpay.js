@@ -15,11 +15,6 @@ export class PaymentIntermo extends PaymentInterface {
     setup() {
         super.setup(...arguments);
 
-
-
-
-
-
 //        this.pollingTimeout = null;
 //        this.inactivityTimeout = null;
 //        this.queued = false;
@@ -40,7 +35,7 @@ export class PaymentIntermo extends PaymentInterface {
                 title: _t('Intermo Payment'),
                 body: self.url_link.qr_code,
             });
-         if (self.pos.get_order().intermo_payment_status == 'payment_pass'){
+         if (self.pos.get_order().intermo_payment_status == 'payment_success'){
                   clearInterval(self.intermoInterval);
                   await self.pos.get_order().selected_paymentline.set_payment_status("done");
                   return true;
@@ -120,9 +115,11 @@ export class PaymentIntermo extends PaymentInterface {
 
         var customername = "";
         var customeremail = "";
+        var customerphone = "+";
         if (order.partner) {
             customername = order.partner.name;
             customeremail = order.partner.email;
+            customerphone = order.partner.phone;
         }
         if (! order.reference) {
             order.set_reference(order.name);
@@ -144,10 +141,10 @@ export class PaymentIntermo extends PaymentInterface {
             "currency": order.pos.currency.name,
             "customername": customername,
             "customeremail": customeremail,
-            "customerphone": "+",
+            "customerphone": customerphone,
             "callbackurl": updatedUrl,
-            "notifyurl": 'https://webhook.site/ef69a887-d86b-4319-ad4c-a09be3653b6d',
-            "pluginname": "prestashop",
+            "notifyurl": updatedUrl ,
+            "pluginname": "Odoo",
             "pluginversion": "v1.1.0",
             "serverless": false,
             "pluginkey": this.payment_method.intermo_plugin_key,
@@ -194,6 +191,7 @@ export class PaymentIntermo extends PaymentInterface {
             if (tmp_payment_method_id){
                 const payment_status_check = await self.pos.orm.call("pos.payment.method", "intermo_get_payment_status", [tmp_payment_method_id, order.jwt_token]);
                 console.log("test=======status", payment_status_check)
+                order.intermo_payment_status = payment_status_check
             };
 
         }
