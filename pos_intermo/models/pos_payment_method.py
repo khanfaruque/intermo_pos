@@ -1,7 +1,7 @@
 from odoo.exceptions import UserError
 from odoo import fields, models, api, _
 from odoo.http import request
-from .razorpay_pos_request import IntermoPosRequest
+from .intermo_pos_request import IntermoPosRequest
 import qrcode
 from io import BytesIO
 import base64
@@ -94,9 +94,9 @@ class PosPaymentMethod(models.Model):
 
 
     def intermo_make_payment_request(self, data):
-        razorpay = IntermoPosRequest(self)
+        intermo = IntermoPosRequest(self)
         body = data
-        response = razorpay._call_intermo(endpoint="pay", payload=body, token=self.intermo_auth_key, intermo_mode=self.intermo_mode)
+        response = intermo._call_intermo(endpoint="pay", payload=body, token=self.intermo_auth_key, intermo_mode=self.intermo_mode)
         print("=----------------33333--------", data)
         if response.get('paymentlink') and not response.get('errorCode'):
 
@@ -127,11 +127,11 @@ class PosPaymentMethod(models.Model):
             img_base64 = base64.b64encode(img_bytes).decode('utf-8')
             return {'qr_code': img_base64,'jwt_token': value_after_pay }
 
-        default_error_msg = _('Razorpay POS payment request expected errorCode not found in the response')
+        default_error_msg = _('Intermo POS payment request expected errorCode not found in the response')
         error = response.get('errorMessage') or default_error_msg
         return {'error': str(error)}
 
 
-    def razorpay_cancel_payment_request(self, data):
+    def intermo_cancel_payment_request(self, data):
 
         return {'errorMessage': ""}

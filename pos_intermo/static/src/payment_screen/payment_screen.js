@@ -9,7 +9,7 @@ patch(PaymentScreen.prototype, {
         super.setup(...arguments);
 //            onMounted(async() => {
 //                const pendingPaymentLine = this.currentOrder.paymentlines.find(
-//                    paymentLine => paymentLine.payment_method.use_payment_terminal === 'razorpay' && (!paymentLine.is_done() && paymentLine.get_payment_status() !== 'pending')
+//                    paymentLine => paymentLine.payment_method.use_payment_terminal === 'intermo' && (!paymentLine.is_done() && paymentLine.get_payment_status() !== 'pending')
 //                );
 //                if (pendingPaymentLine) {
 //                    const payment_status = await pendingPaymentLine.payment_method.payment_terminal._waitForPaymentConfirmation();

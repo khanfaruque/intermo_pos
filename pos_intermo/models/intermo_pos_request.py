@@ -30,9 +30,9 @@ class IntermoPosRequest:
             response.raise_for_status()
             res_json = response.json()
         except requests.exceptions.RequestException as error:
-            _logger.warning("Cannot connect with Razorpay POS. Error: %s", error)
+            _logger.warning("Cannot connect with Intermo POS. Error: %s", error)
             return {'errorMessage': str(error)}
         except ValueError as error:
             _logger.warning("Cannot decode response json. Error: %s", error)
-            return {'errorMessage': _("Cannot decode Razorpay POS response")}
+            return {'errorMessage': _("Cannot decode Intermo POS response")}
         return res_json

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="pos_payment_method_view_form_inherit_pos_razorpay" model="ir.ui.view">
-        <field name="name">pos.payment.method.form.inherit.razorpay</field>
+    <record id="pos_payment_method_view_form_inherit_pos_intermo" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.inherit.intermo</field>
         <field name="model">pos.payment.method</field>
         <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form"/>
         <field name="arch" type="xml">

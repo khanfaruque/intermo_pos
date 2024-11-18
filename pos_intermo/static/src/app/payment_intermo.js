@@ -5,8 +5,6 @@ import { _t } from "@web/core/l10n/translation";
 import { PaymentInterface } from "@point_of_sale/app/payment/payment_interface";
 import { Order } from "@point_of_sale/app/store/models";
 import { AlertDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
-import { useService } from "@web/core/utils/hooks";
-import { renderToString } from "@web/core/utils/render";
 import { PosIntermoPopup } from "@pos_intermo/app/confirm_popup";
 
 const REQUEST_TIMEOUT = 10000;
@@ -59,7 +57,7 @@ export class PaymentIntermo extends PaymentInterface {
 //        })
     }
 //
-    pending_razorpay_line() {
+    pending_intermo_line() {
         return this.pos.getPendingPaymentLine("intermo");
     }
 
@@ -76,7 +74,7 @@ export class PaymentIntermo extends PaymentInterface {
 //
     _handle_odoo_connection_failure(data = {}) {
         // handle timeout
-        const line = this.pending_razorpay_line();
+        const line = this.pending_intermo_line();
         if (line) {
             line.set_payment_status("retry");
         }
@@ -197,7 +195,6 @@ export class PaymentIntermo extends PaymentInterface {
         }
 
     }
-//
 
     _showError(error_msg, title) {
         this.env.services.dialog.add(AlertDialog, {

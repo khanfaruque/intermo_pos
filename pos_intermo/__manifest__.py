@@ -5,21 +5,22 @@
     'version': '1.0',
     'category': 'Sales/Point of Sale',
     'sequence': 6,
-    'summary': 'Integrate your POS with a Razorpay payment terminal',
+    'summary': 'Integrate your POS with Intermo payment terminals',
     'description': """
-Allow Razorpay POS payments
-==============================
+        POS Intermo Integration
+        ==============================
 
-This module allows customers to pay for their orders with debit/credit
-cards and UPI. The transactions are processed by Razorpay POS. A Razorpay merchant account is necessary. It allows the
-following:
+        This module allows customers to pay with debit/credit cards and wallets through Intermo POS terminals.
+        Transactions are processed by Intermo POS, requiring a valid Intermo merchant account.
 
-* Fast payment by just swiping/scanning a credit/debit card or a QR code while on the payment screen
-* Supported cards: Visa, MasterCard, Rupay, UPI
+        Features:
+        * Quick payments via card swipe, scan, or QR code.
+        * Supported payment methods include Visa, MasterCard, Sama Money, and other Wallets.
+
+        For more information, visit [intermo.net](https://intermo.net).
     """,
     'data': [
-        # 'views/pos_payment_method_views.xml',
-        "security/ir.model.access.csv",
+        'security/ir.model.access.csv',
         'views/pos_payment_views.xml',
         'views/pos_payment_method_views.xml',
     ],
@@ -31,9 +32,10 @@ following:
             'pos_intermo/static/src/js/intermo.js',
         ],
         'point_of_sale._assets_pos': [
-
             'pos_intermo/static/**/*',
         ],
     },
     'license': 'LGPL-3',
+    'website': 'https://intermo.net',
+    'images': ['static/description/icon.png'],  # Path to the module's icon
 }
